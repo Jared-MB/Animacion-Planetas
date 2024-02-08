@@ -3,8 +3,13 @@ import * as THREE from 'three';
 const scene = new THREE.Scene();
 
 // Crea la cámara
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 10, 0); // La cámara se coloca 10 unidades arriba del origen
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 10000);
+camera.position.x = 300;
+camera.position.y = 400;
+camera.position.z = 300;
+// camera.zoom = .01;
+
+// La cámara se coloca 10 unidades arriba del origen
 camera.rotation.x = -Math.PI / 2;
 
 // Crea el renderizador
@@ -17,12 +22,15 @@ const textureLoader = new THREE.TextureLoader();
 const planetTexture = textureLoader.load('/planeta.jpg');
 planetTexture.magFilter = THREE.NearestFilter; // Ajusta el tamaño de la textura
 
+const planetTexture2 = textureLoader.load('/planeta2.jpg');
+planetTexture2.magFilter = THREE.NearestFilter; // Ajusta el tamaño de la textura
+
 // Crea geometría y materiales para los planetas
-const geometry = new THREE.SphereGeometry(0.5, 32, 32);
+const geometry = new THREE.SphereGeometry(6, 256, 256);
 // ROJO
-const material1 = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+const material1 = new THREE.MeshBasicMaterial({ map: planetTexture });
 // AZUL
-const material2 = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+const material2 = new THREE.MeshBasicMaterial({ map: planetTexture2 });
 
 // Crea los planetas
 const planet1 = new THREE.Mesh(geometry, material1);
@@ -31,6 +39,7 @@ const planet2 = new THREE.Mesh(geometry, material2);
 // Añade los planetas a la escena
 scene.add(planet1);
 scene.add(planet2);
+// scene.add(camera);
 
 // Parámetros de órbita para cada planeta
 // const semiMajorAxis1 = 3;
@@ -71,6 +80,7 @@ function dos_planetas(X, m1, m2) {
     return XP;
 }
 
+
 const x1 = 0.1;
 const y1 = 0.1;
 const xp1 = 5e-06;
@@ -104,6 +114,8 @@ for (let i = 0; i < N; i++) {
 const p1 = new Array(N);
 const p2 = new Array(N);
 
+const ZOOM = 1100;
+
 for (let k = 0; k < N; k++) {
     const K1 = dos_planetas(X, m1, m2);
     const K2 = dos_planetas(X.map((value, index) => value + 0.5 * h * K1[index]), m1, m2);
@@ -112,22 +124,28 @@ for (let k = 0; k < N; k++) {
 
     X = X.map((value, index) => value + (1 / 6) * h * (K1[index] + 2 * K2[index] + 2 * K3[index] + K4[index]));
 
-    p1[k] = [X[0], X[1]];
-    p2[k] = [X[2], X[3]];
+    p1[k] = [X[0] * ZOOM, X[1] * ZOOM];
+    p2[k] = [X[2] * ZOOM, X[3] * ZOOM];
 }
 
 let i = 0
 
+// camera.updateProjectionMatrix();
+// console.log(p1, p2)
+
+// skip every 3 items
+const planet1Position = p1.filter((_, index) => index % 10 === 0);
+const planet2Position = p2.filter((_, index) => index % 10 === 0);
+
 // Animación
 function animate() {
     requestAnimationFrame(animate);
-    // console.log(p1[i][0] * 1000, p1[i][1] * 1000)
     i++
 
     // Calcula las nuevas posiciones en la órbita
-    const newPosition1 = new THREE.Vector3(p1[i][0], p1[i][1], 0);
-    console.log(newPosition1)
-    const newPosition2 = new THREE.Vector3(p2[i][0], p2[i][1], 0);
+    const newPosition1 = new THREE.Vector3(planet1Position[i][0], planet1Position[i][1], 0);
+    // console.log(newPosition1)
+    const newPosition2 = new THREE.Vector3(planet2Position[i][0], planet2Position[i][1], 0);
     // console.log(newPosition1, newPosition2)
 
     // Actualiza las posiciones de los planetas
@@ -138,7 +156,7 @@ function animate() {
     angle1 += 0.01;
     angle2 += 0.015;
 
-    // Agrega rotación a los planetas en los ejes X, Y y Z
+    // // Agrega rotación a los planetas en los ejes X, Y y Z
     planet1.rotation.x += 0.01;
     planet1.rotation.y += 0.01;
     planet1.rotation.z += 0.01;
