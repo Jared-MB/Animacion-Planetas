@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "server": "node index.js --watch"
+    "server": "node index.js --watch",
+    "bundle:serve": "tsc & vite build & node server.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.5.3",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "@types/socket.io": "^3.0.2",
+    "typescript": "^5.3.3",
     "vite": "^5.0.12"
   }
 }

@@ -1,10 +1,6 @@
 const ZOOM = 1100;
 
-function dos_planetas(X, m1, m2, key) {
-
-    if (key !== 'set_planets_positions') {
-        return
-    }
+function dos_planetas(X, m1, m2) {
     // ODE dos planetas
 
     const XP = new Array(8).fill(0);
@@ -25,7 +21,10 @@ function dos_planetas(X, m1, m2, key) {
     return XP;
 }
 
-export default function setPlanetsPosition(x, N, m1, m2, p1, p2, h) {
+export default function setPlanetsPosition({ x, N, m1, m2, p1, p2, h }) {
+
+    console.log(x, N, m1, m2, p1, p2, h)
+
     let X = x
     for (let k = 0; k < N; k++) {
         const K1 = dos_planetas(X, m1, m2);
@@ -38,6 +37,7 @@ export default function setPlanetsPosition(x, N, m1, m2, p1, p2, h) {
         p1[k] = [X[0] * ZOOM, X[1] * ZOOM];
         p2[k] = [X[2] * ZOOM, X[3] * ZOOM];
     }
+
     return {
         planet1Positions: p1,
         planet2Positions: p2,
