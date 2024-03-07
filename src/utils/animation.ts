@@ -1,10 +1,6 @@
 import * as THREE from 'three';
 
-export default function animatePlanets(planet1PositionFiltered, planet2PositionFiltered, key) {
-    if (key !== 'animation') {
-        return
-    }
-
+export default function animatePlanets(planet1PositionFiltered, planet2PositionFiltered) {
     const scene = new THREE.Scene();
 
     // Crea la cámara
@@ -87,7 +83,5 @@ export default function animatePlanets(planet1PositionFiltered, planet2PositionF
         renderer.render(scene, camera);
     }
 
-    return {
-        animate
-    }
+    animate()
 }

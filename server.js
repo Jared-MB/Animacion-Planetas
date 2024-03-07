@@ -4,23 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_http_1 = require("node:http");
-const node_path_1 = __importDefault(require("node:path"));
+const path_1 = require("path");
 const get_ips_1 = require("@kristall/get-ips");
 const express_1 = __importDefault(require("express"));
 const socket_io_1 = require("socket.io");
-// const express = require('express');
-// const path = require('node:path');
-// const { createServer } = require('node:http');
-// const { getIps } = require('@kristall/get-ips')
-// const { Server } = require('socket.io');
 const app = (0, express_1.default)();
 const server = (0, node_http_1.createServer)(app);
 const io = new socket_io_1.Server(server, {
     maxHttpBufferSize: 1e16,
 });
-app.use(express_1.default.static(node_path_1.default.join(__dirname, "dist")));
+app.use(express_1.default.static((0, path_1.join)(__dirname, "dist")));
 app.get("/", (req, res) => {
-    res.sendFile(node_path_1.default.join(__dirname, "dist", "index.html"));
+    res.sendFile((0, path_1.join)(__dirname, "dist", "index.html"));
 });
 const users = [];
 const tasks = [
@@ -42,6 +37,12 @@ const tasks = [
         response: "filter_planets",
         prev: 2,
     },
+    {
+        id: 4,
+        name: "animation",
+        response: "animation",
+        prev: 3,
+    },
 ];
 const keys = [
     "create_array",
@@ -62,13 +63,17 @@ io.on("connection", (socket) => {
             return;
         }
         if (keys.length === 0) {
-            socket.emit(`user-${userId}`, "No more keys available");
+            socket.emit(`user-${userId}`, {
+                message: "No more keys available",
+                info: responses[responses.length - 1].response
+            });
             return;
         }
         users.push({ id: userId, socketId: socket.id, key: keys.pop() });
         socket.emit(`user-${userId}`, getUserKey(userId));
     });
     socket.on("create_array", (data) => {
+        console.log('createArray');
         const hasAlreadyResponse = responses.some((response) => response.id === data.id);
         if (hasAlreadyResponse) {
             const planetPositionUser = users.find((user) => user.key === "set_planets_positions");
@@ -85,6 +90,7 @@ io.on("connection", (socket) => {
             response: data.response,
             key: "create_array",
         });
+        console.log(responses[0]);
         const planetPositionUser = users.find((user) => user.key === "set_planets_positions");
         if (!planetPositionUser)
             return;
@@ -106,76 +112,23 @@ io.on("connection", (socket) => {
         });
     });
     socket.on("set_planets_positions", (data) => {
-        console.log(data);
+        console.log('setPlanetsPositions');
         responses.push({ id: data.id, response: data.response, key: "set_planets_positions" });
-        console.log(responses);
-        // const positionsIndex = responses.findIndex(
-        //     (response) => response.id === data.id,
-        // );
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet1Position?.hasOwnProperty("firstHalf")) {
-        //     responses.push({ id: data.id, response: data.response, key: "set_planets_positions" });
-        // }
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet1Position?.hasOwnProperty("secondHalf")) {
-        //     const positions = responses.find((response) => response.id === data.id);
-        //     if (!positions) throw new Error("No positions found");
-        //     responses[positionsIndex].response = {
-        //         planet1Position: [
-        //             ...positions.response.planet1Position.firstHalf,
-        //             ...data.response.planet1Position.secondHalf,
-        //         ],
-        //         ...responses[positionsIndex].response,
-        //     }
-        // }
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet2Position?.hasOwnProperty("firstHalf")) {
-        //     console.log('firstHalf')
-        //     const positions = responses.findIndex((response) => response.id === data.id);
-        //     if (positions === -1) return;
-        //     responses[positions].response = {
-        //         planet2Position: [
-        //             ...data.response.planet2Position.firstHalf,
-        //         ],
-        //         ...responses[positions].response,
-        //     };
-        // }
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // else if (data.response?.planet2Position?.hasOwnProperty("secondHalf")) {
-        //     const positions = responses.findIndex((response) => response.id === data.id);
-        //     if (positions === -1) return;
-        //     responses[positions].response = {
-        //         planet2Position: [
-        //             ...responses[positions].response.planet2Position.firstHalf,
-        //             ...data.response.planet2Position.secondHalf,
-        //         ],
-        //         ...responses[positions].response,
-        //     };
-        //     console.log(responses[1])
-        //     const filterPlanetsUser = users.find(
-        //         (user) => user.key === "filter_planets",
-        //     );
-        //     if (!filterPlanetsUser) return;
-        //     socket.emit(`user-${filterPlanetsUser.id}-data`, {
-        //         key: "filter_planets",
-        //         info: responses[positionsIndex].response,
-        //     });
-        // }
-        // const hasAlreadyResponse = responses.some(response => response.id === data.id)
-        // if (hasAlreadyResponse) return
-        // socket.emit("users", 'set_planets_positions')
+        console.log(responses[1]);
     });
     socket.on("filter_planets", (data) => {
+        console.log('filterPlanets');
         const hasAlreadyResponse = responses.some((response) => response.id === data.id);
         if (hasAlreadyResponse)
             return;
         responses.push({ id: data.id, response: data.response, key: "filter_planets" });
+        console.log(responses[2]);
     });
-    // socket.on('data', (data) => {
-    //     responses.push(data)
-    //     if (responses.length === 3) {
-    //         const [createArrays, setPlanetsPositions, filterArrays] = responses
-    //         socket.emit('animation', { createArrays, setPlanetsPositions, filterArrays })
-    //     }
-    // })
+    socket.on('data', (data) => {
+        responses.push(data);
+        if (responses.length === 3) {
+            const [createArrays, setPlanetsPositions, filterArrays] = responses;
+            socket.emit('animation', { createArrays, setPlanetsPositions, filterArrays });
+        }
+    });
 });

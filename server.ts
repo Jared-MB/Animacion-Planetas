@@ -1,14 +1,9 @@
 import { createServer } from "node:http";
-import path from "node:path";
+import { join } from "path";
 import { getIps } from "@kristall/get-ips";
-import express, { Request, Response } from "express";
+import express from "express";
+import { Request, Response } from 'express'
 import { Server } from "socket.io";
-
-// const express = require('express');
-// const path = require('node:path');
-// const { createServer } = require('node:http');
-// const { getIps } = require('@kristall/get-ips')
-// const { Server } = require('socket.io');
 
 const app = express();
 const server = createServer(app);
@@ -16,10 +11,10 @@ const io = new Server(server, {
     maxHttpBufferSize: 1e16,
 });
 
-app.use(express.static(path.join(__dirname, "dist")));
+app.use(express.static(join(__dirname, "dist")));
 
 app.get("/", (req: Request, res: Response) => {
-    res.sendFile(path.join(__dirname, "dist", "index.html"));
+    res.sendFile(join(__dirname, "dist", "index.html"));
 });
 
 interface User {
@@ -55,6 +50,12 @@ const tasks: Task[] = [
         name: "filter_planets",
         response: "filter_planets",
         prev: 2,
+    },
+    {
+        id: 4,
+        name: "animation",
+        response: "animation",
+        prev: 3,
     },
 ];
 
@@ -92,7 +93,10 @@ io.on("connection", (socket) => {
         }
 
         if (keys.length === 0) {
-            socket.emit(`user-${userId}`, "No more keys available");
+            socket.emit(`user-${userId}`, {
+                message: "No more keys available",
+                info: responses[responses.length - 1].response
+            });
             return;
         }
         users.push({ id: userId, socketId: socket.id, key: keys.pop() as string });
@@ -100,6 +104,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("create_array", (data) => {
+        console.log('createArray')
         const hasAlreadyResponse = responses.some(
             (response) => response.id === data.id,
         );
@@ -119,6 +124,7 @@ io.on("connection", (socket) => {
             response: data.response,
             key: "create_array",
         });
+        console.log(responses[0])
         const planetPositionUser = users.find(
             (user) => user.key === "set_planets_positions",
         );
@@ -146,84 +152,18 @@ io.on("connection", (socket) => {
     });
 
     socket.on("set_planets_positions", (data) => {
-        console.log(data)
+        console.log('setPlanetsPositions')
         responses.push({ id: data.id, response: data.response, key: "set_planets_positions" });
-        console.log(responses)
-        // const positionsIndex = responses.findIndex(
-        //     (response) => response.id === data.id,
-        // );
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet1Position?.hasOwnProperty("firstHalf")) {
-        //     responses.push({ id: data.id, response: data.response, key: "set_planets_positions" });
-        // }
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet1Position?.hasOwnProperty("secondHalf")) {
-        //     const positions = responses.find((response) => response.id === data.id);
-        //     if (!positions) throw new Error("No positions found");
-
-        //     responses[positionsIndex].response = {
-        //         planet1Position: [
-        //             ...positions.response.planet1Position.firstHalf,
-        //             ...data.response.planet1Position.secondHalf,
-        //         ],
-        //         ...responses[positionsIndex].response,
-        //     }
-
-        // }
-
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // if (data.response?.planet2Position?.hasOwnProperty("firstHalf")) {
-        //     console.log('firstHalf')
-        //     const positions = responses.findIndex((response) => response.id === data.id);
-        //     if (positions === -1) return;
-        //     responses[positions].response = {
-        //         planet2Position: [
-        //             ...data.response.planet2Position.firstHalf,
-        //         ],
-        //         ...responses[positions].response,
-        //     };
-        // }
-        // // biome-ignore lint/suspicious/noPrototypeBuiltins: <explanation>
-        // else if (data.response?.planet2Position?.hasOwnProperty("secondHalf")) {
-        //     const positions = responses.findIndex((response) => response.id === data.id);
-        //     if (positions === -1) return;
-        //     responses[positions].response = {
-        //         planet2Position: [
-        //             ...responses[positions].response.planet2Position.firstHalf,
-        //             ...data.response.planet2Position.secondHalf,
-        //         ],
-        //         ...responses[positions].response,
-        //     };
-        //     console.log(responses[1])
-        //     const filterPlanetsUser = users.find(
-        //         (user) => user.key === "filter_planets",
-        //     );
-        //     if (!filterPlanetsUser) return;
-        //     socket.emit(`user-${filterPlanetsUser.id}-data`, {
-        //         key: "filter_planets",
-        //         info: responses[positionsIndex].response,
-        //     });
-
-        // }
-        // const hasAlreadyResponse = responses.some(response => response.id === data.id)
-        // if (hasAlreadyResponse) return
-
-        // socket.emit("users", 'set_planets_positions')
+        console.log(responses[1])
     });
 
     socket.on("filter_planets", (data) => {
+        console.log('filterPlanets')
         const hasAlreadyResponse = responses.some(
             (response) => response.id === data.id,
         );
         if (hasAlreadyResponse) return;
         responses.push({ id: data.id, response: data.response, key: "filter_planets" });
+        console.log(responses[2])
     });
-
-    // socket.on('data', (data) => {
-    //     responses.push(data)
-    //     if (responses.length === 3) {
-    //         const [createArrays, setPlanetsPositions, filterArrays] = responses
-    //         socket.emit('animation', { createArrays, setPlanetsPositions, filterArrays })
-    //     }
-    // })
 });

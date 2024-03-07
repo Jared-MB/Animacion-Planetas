@@ -23,8 +23,6 @@ function dos_planetas(X, m1, m2) {
 
 export default function setPlanetsPosition({ x, N, m1, m2, p1, p2, h }) {
 
-    console.log(x, N, m1, m2, p1, p2, h)
-
     let X = x
     for (let k = 0; k < N; k++) {
         const K1 = dos_planetas(X, m1, m2);

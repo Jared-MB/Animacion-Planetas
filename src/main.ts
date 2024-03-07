@@ -1,14 +1,14 @@
-
+import io from 'socket.io-client';
+import { v4 as uuidv4 } from 'uuid';
 import animatePlanets from './utils/animation';
 import createArrays from './utils/createArrays';
 import filterArrays from './utils/filterArrays';
 import setPlanetsPositions from './utils/setPlanetsPositions';
 
-// Socket.io
 const hasId = window.localStorage.getItem('id') ?? null;
 
-import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
 const id = hasId ? hasId : uuidv4();
+
 const socket = io();
 document.addEventListener('DOMContentLoaded', () => {
     if (!hasId) {
@@ -21,12 +21,13 @@ socket.on(`user-${id}`, (data) => {
 
     window.localStorage.setItem('key', data);
 
-    if (data === 'No more keys available') {
-        alert('No more keys available');
+    if (data.message === 'No more keys available') {
+        const { planet1PositionFiltered, planet2PositionFiltered } = data.info
+        animatePlanets(planet1PositionFiltered, planet2PositionFiltered)
+        return
     }
-    const key = data
 
-    console.log(key)
+    const key = data
 
     socket.emit('get-data', {
         key,
@@ -37,18 +38,18 @@ socket.on(`user-${id}`, (data) => {
 
 socket.on(`user-${id}-data`, (data) => {
 
-    let response = null
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    let response = null as any
 
     if (data.key === 'create_array') {
-        response = createArrays(data.key)
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        response = createArrays(data.key) as any
         socket.emit('create_array', {
             response,
             id,
         })
     }
     else if (data.key === 'set_planets_positions') {
-
-
         const positions = setPlanetsPositions({
             x: data.info.X,
             N: data.info.N,
@@ -66,50 +67,24 @@ socket.on(`user-${id}-data`, (data) => {
             },
             id,
         })
-        // socket.emit('set_planets_positions', {
-        //     response: {
-        //         planet1Position: {
-        //             secondHalf
-        //         }
-        //     },
-        //     id,
-        // })
-        // socket.emit('set_planets_positions', {
-        //     response: {
-        //         planet2Position: {
-        //             firstHalf: firstHalf2
-        //         }
-        //     },
-        //     id,
-        // })
-        // socket.emit('set_planets_positions', {
-        //     response: {
-        //         planet2Position: {
-        //             secondHalf: secondHalf2
-        //         }
-        //     },
-        //     id,
-        // })
     }
     else if (data.key === 'filter_planets') {
-        console.log(data)
-        response = filterArrays(data.info.planet1Positions, data.info.planet2Positions, data.key)
+        console.log(data.info)
+        response = filterArrays(data.info.planet1Position, data.info.planet2Position) as {
+            planet1PositionFiltered: [number, number][],
+            planet2PositionFiltered: [number, number][]
+        }
         socket.emit('filter_planets', {
             response,
             id,
         })
     }
+    else if (data.key === 'animation') {
+        console.log(data.info.planet1PositionFiltered, data.info.planet2PositionFiltered)
+        const { planet1PositionFiltered, planet2PositionFiltered } = data.info
 
-})
+        animatePlanets(planet1PositionFiltered, planet2PositionFiltered)
 
-socket.on('users', (data) => {
-    // set when a user is connected
-    console.log(data)
-    document.getElementById('users').innerHTML += data
-})
+    }
 
-socket.on('animation', (data) => {
-    const { planet1PositionFiltered, planet2PositionFiltered } = data
-    const { animate } = animatePlanets(planet1PositionFiltered, planet2PositionFiltered, data)
-    animate()
 })
