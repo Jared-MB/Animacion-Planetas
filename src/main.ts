@@ -38,12 +38,9 @@ socket.on(`user-${id}`, (data) => {
 
 socket.on(`user-${id}-data`, (data) => {
 
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-    let response = null as any
-
     if (data.key === 'create_array') {
         // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-        response = createArrays(data.key) as any
+        const response = createArrays(data.key) as any
         socket.emit('create_array', {
             response,
             id,
@@ -70,7 +67,7 @@ socket.on(`user-${id}-data`, (data) => {
     }
     else if (data.key === 'filter_planets') {
         console.log(data.info)
-        response = filterArrays(data.info.planet1Position, data.info.planet2Position) as {
+        const response = filterArrays(data.info.planet1Position, data.info.planet2Position) as {
             planet1PositionFiltered: [number, number][],
             planet2PositionFiltered: [number, number][]
         }
@@ -87,4 +84,16 @@ socket.on(`user-${id}-data`, (data) => {
 
     }
 
+})
+
+socket.on('animation', (data) => {
+    console.log('animation')
+    const { planet1PositionFiltered, planet2PositionFiltered } = data.info
+
+    animatePlanets(planet1PositionFiltered, planet2PositionFiltered)
+})
+
+const button = document.querySelector('button') as HTMLButtonElement;
+button.addEventListener('click', () => {
+    socket.emit('get-animation')
 })

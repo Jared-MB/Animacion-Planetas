@@ -123,12 +123,13 @@ io.on("connection", (socket) => {
             return;
         responses.push({ id: data.id, response: data.response, key: "filter_planets" });
         console.log(responses[2]);
+        socket.emit('animation', {
+            info: data.response,
+        });
     });
-    socket.on('data', (data) => {
-        responses.push(data);
-        if (responses.length === 3) {
-            const [createArrays, setPlanetsPositions, filterArrays] = responses;
-            socket.emit('animation', { createArrays, setPlanetsPositions, filterArrays });
-        }
+    socket.on("get-animation", (data) => {
+        socket.emit('animation', {
+            info: responses[2].response,
+        });
     });
 });

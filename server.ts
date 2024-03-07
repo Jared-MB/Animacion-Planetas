@@ -165,5 +165,14 @@ io.on("connection", (socket) => {
         if (hasAlreadyResponse) return;
         responses.push({ id: data.id, response: data.response, key: "filter_planets" });
         console.log(responses[2])
+        socket.emit('animation', {
+            info: data.response,
+        })
     });
+
+    socket.on("get-animation", (data) => {
+        socket.emit('animation', {
+            info: responses[2].response,
+        })
+    })
 });
