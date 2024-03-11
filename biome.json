@@ -10,8 +10,11 @@
 		}
 	},
 	"files": {
-		"ignore" : [
+		"ignore": [
 			"server.js"
 		]
+	},
+	"formatter": {
+		"enabled": true
 	}
 }

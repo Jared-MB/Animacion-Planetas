@@ -2,6 +2,9 @@
 package-lock.json
 pnpm-lock.yaml
 
-/dist
+# compiled output
+dist
 
 /node_modules
+
+server.js
