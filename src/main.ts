@@ -50,7 +50,10 @@ socket.on(
 				id,
 			});
 		} else if (data.key === "set_planets_positions") {
-			const positions = setPlanetsPositions([data.info[0], data.info[1]]);
+			const positions = setPlanetsPositions([
+				(data.info as CreateArrayResponse)[0],
+				(data.info as CreateArrayResponse)[1],
+			]);
 
 			socket.emit("set_planets_positions", {
 				response: positions,

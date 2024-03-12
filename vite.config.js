@@ -8,5 +8,6 @@ export default defineConfig({
   server: {
   },
   build: {
+    outDir: 'dist/client',
   },
 });

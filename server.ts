@@ -1,5 +1,5 @@
 import { createServer } from "node:http";
-import { join } from "path";
+import { join } from "node:path";
 import { getIps } from "@kristall/get-ips";
 import express from "express";
 import type { Request, Response } from "express";
@@ -13,10 +13,10 @@ const io = new Server(server, {
 	maxHttpBufferSize: 1e16,
 });
 
-app.use(express.static(join(__dirname, "dist")));
+app.use(express.static(join(__dirname, "client")));
 
 app.get("/", (req: Request, res: Response) => {
-	res.sendFile(join(__dirname, "dist", "index.html"));
+	res.sendFile(join(__dirname, "dist/client", "index.html"));
 });
 
 const users: User[] = [];
@@ -104,7 +104,6 @@ io.on("connection", (socket) => {
 			response: data.response,
 			key: "create_array",
 		});
-		console.log(responses[0]);
 		const planetPositionUser = users.find(
 			(user) => user.key === "set_planets_positions",
 		);
@@ -144,7 +143,6 @@ io.on("connection", (socket) => {
 	});
 
 	socket.on("filter_planets", (data) => {
-		console.log("filterPlanets");
 		const hasAlreadyResponse = responses.some(
 			(response) => response.id === data.id,
 		);
@@ -154,7 +152,6 @@ io.on("connection", (socket) => {
 			response: data.response,
 			key: "filter_planets",
 		});
-		console.log(responses[2]);
 		socket.emit("animation", {
 			info: data.response,
 		});
