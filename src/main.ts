@@ -1,6 +1,10 @@
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
-import { CreateArrayResponse, PlanetsPositions, ServerResponse } from "./types";
+import type {
+	CreateArrayResponse,
+	PlanetsPositions,
+	ServerResponse,
+} from "./types";
 import animatePlanets from "./utils/animation";
 import createArrays from "./utils/createArrays";
 import filterArrays from "./utils/filterArrays";

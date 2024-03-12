@@ -2,10 +2,10 @@ import { createServer } from "node:http";
 import { join } from "path";
 import { getIps } from "@kristall/get-ips";
 import express from "express";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { Server } from "socket.io";
 
-import { ClientResponse, Task, User } from "./src/types";
+import type { ClientResponse, Task, User } from "./src/types";
 
 const app = express();
 const server = createServer(app);

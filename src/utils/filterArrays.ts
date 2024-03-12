@@ -1,4 +1,4 @@
-import { PlanetsPositions } from "../types";
+import type { PlanetsPositions } from "../types";
 
 export default function filterArrays({
 	planetPositions1,

@@ -1,6 +1,5 @@
 # Package Manager
 package-lock.json
-pnpm-lock.yaml
 
 # compiled output
 dist

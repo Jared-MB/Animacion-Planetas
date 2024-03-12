@@ -11,7 +11,8 @@
     "test": "vitest",
     "bundle:serve": "tsc & vite build & node server.js",
     "biome:lint": "biome format ./src server.ts",
-    "biome:format": "biome format --write ./src server.ts"
+    "biome:format": "biome format --write ./src server.ts",
+    "biome:ci": "biome ci ./src server.ts"
   },
   "author": "",
   "license": "ISC",

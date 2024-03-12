@@ -1,5 +1,5 @@
 import { G, H, M1, M2, N, ZOOM } from "../constants";
-import { PlanetsPositions } from "../types";
+import type { PlanetsPositions } from "../types";
 import setX from "./setX";
 
 function dos_planetas(X: number[], m1: number, m2: number) {
