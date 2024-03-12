@@ -1,12 +1,18 @@
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export default function filterArrays(planet1Positions: any[], planet2Positions: any[]) {
+import { PlanetsPositions } from "../types";
 
-    console.log(planet1Positions, planet2Positions)
-    const planet1PositionFiltered = planet1Positions.filter((_, index) => index % 10 === 0);
-    const planet2PositionFiltered = planet2Positions.filter((_, index) => index % 10 === 0);
+export default function filterArrays({
+	planetPositions1,
+	planetPositions2,
+}: PlanetsPositions): PlanetsPositions {
+	const planetPositionFiltered1 = planetPositions1.filter(
+		(_, index) => index % 10 === 0,
+	);
+	const planetPositionFiltered2 = planetPositions2.filter(
+		(_, index) => index % 10 === 0,
+	);
 
-    return {
-        planet1PositionFiltered,
-        planet2PositionFiltered
-    }
+	return {
+		planetPositions1: planetPositionFiltered1,
+		planetPositions2: planetPositionFiltered2,
+	};
 }
