@@ -5,10 +5,15 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "server": "node index.js --watch",
-    "compile": "tsc server.ts",
-    "bundle:serve": "tsc & vite build & node server.js"
+    "vite:build": "vite build",
+    "server": "node dist/server.js",
+    "build": "tsc & vite build",
+    "test": "vitest",
+    "tsc": "tsc",
+    "bundle:serve": "tsc & vite build & node dist/server.js",
+    "biome:lint": "biome format ./src server.ts",
+    "biome:format": "biome format --write ./src server.ts",
+    "biome:ci": "biome ci ./src server.ts"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +32,7 @@
     "@types/socket.io": "^3.0.2",
     "@types/uuid": "^9.0.8",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.0.12",
+    "vitest": "^1.3.1"
   }
 }
