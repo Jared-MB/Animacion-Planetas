@@ -7,3 +7,7 @@ dist
 /node_modules
 
 server.js
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

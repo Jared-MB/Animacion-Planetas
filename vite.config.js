@@ -10,4 +10,7 @@ export default defineConfig({
   build: {
     outDir: 'dist/client',
   },
+  test: {
+    exclude: ['__test__/e2e/**/*.spec.ts']
+  }
 });
