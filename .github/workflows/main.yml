@@ -23,7 +23,7 @@ jobs:
       - name: Run Biome
         run: biome ci ./src server.ts
 
-  test:
+  build:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v4
@@ -32,6 +32,22 @@ jobs:
       - uses: pnpm/action-setup@v3
         with:
           version: 8.15.0
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.18.2
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build
+
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
