@@ -55,8 +55,7 @@ const keys = [
 	"animation",
 ].reverse();
 
-const ips = getIps();
-const ip = process.argv[2] === "--local" ? "localhost" : ips[0].address;
+const ip = process.argv[2] === "--local" ? "localhost" : getIps()[0].address;
 
 server.listen(3000, ip, () => {
 	console.log(`listening on http://${ip}:3000`);
