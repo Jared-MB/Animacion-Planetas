@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "vite:build": "vite build",
-    "server": "node dist/server.js",
+    "start": "node dist/server.js",
+    "start:local": "node dist/server.js --local",
     "build": "tsc & vite build",
     "test": "vitest",
     "tsc": "tsc",

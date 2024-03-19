@@ -55,8 +55,11 @@ const keys = [
 	"animation",
 ].reverse();
 
-server.listen(3000, getIps()[0].address, () => {
-	console.log(`listening on http://${getIps()[0].address}:3000`);
+const ips = getIps();
+const ip = process.argv[2] === "--local" ? "localhost" : ips[0].address;
+
+server.listen(3000, ip, () => {
+	console.log(`listening on http://${ip}:3000`);
 });
 
 const getUserKey = (userId: string): string | null =>

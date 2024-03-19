@@ -2,9 +2,10 @@ import { getIps } from "@kristall/get-ips";
 import { expect, test } from "@playwright/test";
 
 test("E2E test with multiple browsers", async ({ browser }) => {
-	const ips = await getIps();
+	// const ips = await getIps();
 
-	const URL = `http:${ips[0].address}:3000`;
+	// const URL = `http:${ips[0].address}:3000`;
+	const URL = "http://localhost:3000";
 
 	const context = await browser.newContext({});
 	const context2 = await browser.newContext({});
