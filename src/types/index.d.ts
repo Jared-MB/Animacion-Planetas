@@ -3,13 +3,6 @@ export interface PlanetsPositions {
 	planetPositions2: [number, number][];
 }
 
-export interface Task {
-	id: number;
-	name: string;
-	response: string;
-	prev: number | null;
-}
-
 export interface User {
 	id: string;
 	socketId: string;
