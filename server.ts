@@ -81,12 +81,20 @@ io.on("connection", (socket) => {
 			});
 			return;
 		}
-		users.push({ id: userId, socketId: socket.id, key: keys.pop() as string });
+
+		const user = {
+			id: userId,
+			socketId: socket.id,
+			key: keys.pop() as string,
+		};
+
+		console.log(user, "user");
+
+		users.push(user);
 		socket.emit(`user-${userId}`, getUserKey(userId));
 	});
 
 	socket.on("create_array", (data) => {
-		console.log("createArray");
 		const hasAlreadyResponse = responses.some(
 			(response) => response.id === data.id,
 		);
@@ -109,30 +117,31 @@ io.on("connection", (socket) => {
 		const planetPositionUser = users.find(
 			(user) => user.key === "set_planets_positions",
 		);
+		console.log(planetPositionUser, "planetPositionUser");
 		if (!planetPositionUser) return;
-		socket.emit(`user-${planetPositionUser.id}-data`, {
+		io.emit(`user-${planetPositionUser.id}-data`, {
 			key: "set_planets_positions",
-			info: data,
+			info: data.response,
 		});
 	});
 
-	socket.on("get-data", ({ key, id }) => {
-		const prev = tasks.find((task) => task.name === key);
+	// socket.on("get-data", ({ key, id }) => {
+	// 	const prev = tasks.find((task) => task.name === key);
 
-		if (!prev) return;
+	// 	if (!prev) return;
 
-		const isPrevNumber = typeof prev.prev === "number";
-		const previousKey = isPrevNumber
-			? tasks[(prev.prev as number) - 1].name
-			: null;
+	// 	const isPrevNumber = typeof prev.prev === "number";
+	// 	const previousKey = isPrevNumber
+	// 		? tasks[(prev.prev as number) - 1].name
+	// 		: null;
 
-		const data = responses.find((response) => response.key === previousKey);
+	// 	const data = responses.find((response) => response.key === previousKey);
 
-		socket.emit(`user-${id}-data`, {
-			key,
-			info: data ? data.response : null,
-		});
-	});
+	// 	socket.emit(`user-${id}-data`, {
+	// 		key,
+	// 		info: data ? data.response : null,
+	// 	});
+	// });
 
 	socket.on("set_planets_positions", (data) => {
 		console.log("setPlanetsPositions");
@@ -141,7 +150,14 @@ io.on("connection", (socket) => {
 			response: data.response,
 			key: "set_planets_positions",
 		});
-		console.log(responses[1]);
+		const filterPlanetsUser = users.find(
+			(user) => user.key === "filter_planets",
+		);
+		if (!filterPlanetsUser) return;
+		io.emit(`user-${filterPlanetsUser.id}-data`, {
+			key: "filter_planets",
+			info: data.response,
+		});
 	});
 
 	socket.on("filter_planets", (data) => {
@@ -154,7 +170,8 @@ io.on("connection", (socket) => {
 			response: data.response,
 			key: "filter_planets",
 		});
-		socket.emit("animation", {
+		console.log("filterPlanets");
+		io.emit("animation", {
 			info: data.response,
 		});
 	});
