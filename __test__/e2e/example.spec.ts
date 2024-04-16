@@ -31,10 +31,16 @@ test("E2E test with multiple browsers", async ({ browser }) => {
 	const title3 = await page3.title();
 	await page3.waitForTimeout(5000);
 	expect(title3).toContain("Animación Planetas");
-	const canvas = page3.locator("canvas");
-	await canvas.screenshot({ path: "test-results/screenshot.png" });
+	const canvas = page.locator("canvas");
+	const canvas2 = page2.locator("canvas");
+	const canvas3 = page3.locator("canvas");
+	await canvas3.screenshot({ path: "test-results/screenshot_canvas_1.png" });
+	await canvas2.screenshot({ path: "test-results/screenshot_canvas_2.png" });
+	await canvas.screenshot({ path: "test-results/screenshot_canvas_3.png" });
 	await page3.waitForTimeout(2000);
-	await page3.screenshot({ path: "test-results/screenshot2.png" });
+	await canvas.screenshot({ path: "test-results/screenshot_canvas_12.png" });
+	await canvas2.screenshot({ path: "test-results/screenshot_canvas_22.png" });
+	await canvas3.screenshot({ path: "test-results/screenshot_canvas_32.png" });
 
 	await context.close();
 	await context2.close();

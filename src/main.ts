@@ -10,15 +10,10 @@ import createArrays from "./utils/createArrays";
 import filterArrays from "./utils/filterArrays";
 import setPlanetsPositions from "./utils/setPlanetsPositions";
 
-const hasId = window.localStorage.getItem("id") ?? null;
-
-const id = hasId ? hasId : uuidv4();
+const id = uuidv4();
 
 const socket = io();
 document.addEventListener("DOMContentLoaded", () => {
-	if (!hasId) {
-		window.localStorage.setItem("id", id);
-	}
 	socket.emit("userId", id);
 });
 
@@ -30,26 +25,12 @@ socket.on(`user-${id}`, (data) => {
 		animatePlanets(planet1PositionFiltered, planet2PositionFiltered);
 		return;
 	}
-
-	const key = data;
-
-	socket.emit("get-data", {
-		key,
-		id,
-	});
 });
 
 socket.on(
 	`user-${id}-data`,
 	(data: ServerResponse<CreateArrayResponse | PlanetsPositions>) => {
-		if (data.key === "create_array") {
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			const response = createArrays() as any;
-			socket.emit("create_array", {
-				response,
-				id,
-			});
-		} else if (data.key === "set_planets_positions") {
+		if (data.key === "set_planets_positions") {
 			const positions = setPlanetsPositions([
 				(data.info as CreateArrayResponse)[0],
 				(data.info as CreateArrayResponse)[1],
@@ -60,6 +41,8 @@ socket.on(
 				id,
 			});
 		} else if (data.key === "filter_planets") {
+			console.log("filter_planets", data.info);
+
 			const response = filterArrays({
 				planetPositions1: (data.info as PlanetsPositions).planetPositions1,
 				planetPositions2: (data.info as PlanetsPositions).planetPositions2,
@@ -69,6 +52,8 @@ socket.on(
 				id,
 			});
 		} else if (data.key === "animation") {
+			console.log("animation");
+
 			const { planetPositions1, planetPositions2 } =
 				data.info as PlanetsPositions;
 
@@ -79,11 +64,17 @@ socket.on(
 
 socket.on("animation", (data) => {
 	const { planetPositions1, planetPositions2 } = data.info as PlanetsPositions;
-
+	console.log(data);
 	animatePlanets(planetPositions1, planetPositions2);
 });
 
-const button = document.querySelector("button") as HTMLButtonElement;
-button.addEventListener("click", () => {
-	socket.emit("get-animation");
-});
+const button = document.getElementById("startAnimation");
+if (button) {
+	button.addEventListener("click", () => {
+		const response = createArrays();
+		socket.emit("create_array", {
+			response,
+			id,
+		});
+	});
+}
