@@ -50,10 +50,6 @@ export default function animatePlanets(
 	let angle1 = 0;
 	let angle2 = 0;
 
-	// const { planet1Positions: p1, planet2Positions: p2, N, X, m1, m2, h } = createArrays(key);
-	// const { planet1Positions, planet2Positions } = setPlanetsPositions(X, N, m1, m2, p1, p2, h, key);
-	// const { planet1PositionFiltered, planet2PositionFiltered } = filterArrays(planet1Positions, planet2Positions, key);
-
 	// ----- MAIN FUNCTION -> TO THE MAIN COMPUTER/SERVER
 	// Animación
 	let i = 0;
@@ -67,13 +63,12 @@ export default function animatePlanets(
 			planet1PositionFiltered[i][1],
 			0,
 		);
-		// console.log(newPosition1)
+
 		const newPosition2 = new THREE.Vector3(
 			planet2PositionFiltered[i][0],
 			planet2PositionFiltered[i][1],
 			0,
 		);
-		// console.log(newPosition1, newPosition2)
 
 		// Actualiza las posiciones de los planetas
 		planet1.position.copy(newPosition1);
@@ -83,7 +78,7 @@ export default function animatePlanets(
 		angle1 += 0.01;
 		angle2 += 0.015;
 
-		// // Agrega rotación a los planetas en los ejes X, Y y Z
+		// Agrega rotación a los planetas en los ejes X, Y y Z
 		planet1.rotation.x += 0.01;
 		planet1.rotation.y += 0.01;
 		planet1.rotation.z += 0.01;
