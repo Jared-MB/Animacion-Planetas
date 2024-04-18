@@ -1,5 +1,5 @@
 import io from "socket.io-client";
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuid } from "uuid";
 import type {
 	CreateArrayResponse,
 	PlanetsPositions,
@@ -13,7 +13,7 @@ import {
 	setPlanetsPositions,
 } from "./utils";
 
-const id = uuidv4();
+const id = uuid();
 
 const socket = io();
 document.addEventListener("DOMContentLoaded", () => {
