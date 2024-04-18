@@ -5,10 +5,13 @@ import type {
 	PlanetsPositions,
 	ServerResponse,
 } from "./types";
-import animatePlanets from "./utils/animation";
-import createArrays from "./utils/createArrays";
-import filterArrays from "./utils/filterArrays";
-import setPlanetsPositions from "./utils/setPlanetsPositions";
+
+import {
+	animation as animatePlanets,
+	createPlanetsArrays as createArrays,
+	filterArrays,
+	setPlanetsPositions,
+} from "./utils";
 
 const id = uuidv4();
 
@@ -41,8 +44,6 @@ socket.on(
 				id,
 			});
 		} else if (data.key === "filter_planets") {
-			console.log("filter_planets", data.info);
-
 			const response = filterArrays({
 				planetPositions1: (data.info as PlanetsPositions).planetPositions1,
 				planetPositions2: (data.info as PlanetsPositions).planetPositions2,
@@ -52,8 +53,6 @@ socket.on(
 				id,
 			});
 		} else if (data.key === "animation") {
-			console.log("animation");
-
 			const { planetPositions1, planetPositions2 } =
 				data.info as PlanetsPositions;
 
@@ -64,7 +63,6 @@ socket.on(
 
 socket.on("animation", (data) => {
 	const { planetPositions1, planetPositions2 } = data.info as PlanetsPositions;
-	console.log(data);
 	animatePlanets(planetPositions1, planetPositions2);
 });
 
