@@ -6,37 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animación Planetas</title>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="Estilos.css"> <!-- Agrega tu archivo CSS aquí -->
+    <style>
+        /* Estilos CSS para posicionar el mensaje */
+        #loader {
+            position: relative;
+            /* Asegura que el mensaje se posicione relativo a este contenedor */
+        }
+
+        #loadingMessage {
+            position: absolute;
+            top: 50%;
+            /* Posición en el 50% del contenedor padre (loader) */
+            left: 50%;
+            /* Posición en el 50% del contenedor padre (loader) */
+            transform: translate(-50%, -50%);
+            /* Centra el mensaje horizontal y verticalmente */
+            z-index: 1;
+            /* Asegura que el mensaje esté encima de la animación de carga */
+        }
+    </style>
 </head>
 
 <body>
+    <div id="loadingMessage">Esperando a los usuarios...</div>
     <button id="startAnimation">Start animation</button>
+    <div id="loader" class="loader"></div> <!-- Div para la animación de carga -->
     <script src="/src/main.ts" type="module"></script>
-    <!-- <script type="module">
-
-        const hasId = window.localStorage.getItem('id') ?? null;
-
-        import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
-        const id = hasId ? hasId : uuidv4();
-        const socket = io();
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!hasId) {
-                window.localStorage.setItem('id', id);
-            }
-            socket.emit('userId', id);
-        });
-
-        document.getElementById('btn').addEventListener('click', () => {
-            socket.emit('data', {
-                id,
-                data: 'Hello from the client'
-            });
-        });
-
-        socket.on(`user-${id}`, (data) => {
-            window.localStorage.setItem('key', data);
-        });
-
-    </script> -->
 </body>
 
 </html>
