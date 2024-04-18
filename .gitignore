@@ -1,0 +1,13 @@
+# Package Manager
+package-lock.json
+
+# compiled output
+dist
+
+/node_modules
+
+server.js
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
