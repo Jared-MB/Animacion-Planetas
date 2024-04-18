@@ -5,7 +5,7 @@ import express from "express";
 import type { Request, Response } from "express";
 import { Server } from "socket.io";
 
-import type { ClientResponse, Task, User } from "./src/types";
+import type { ClientResponse, User } from "./src/types";
 
 const app = express();
 const server = createServer(app);
@@ -15,38 +15,11 @@ const io = new Server(server, {
 
 app.use(express.static(join(__dirname, "client")));
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_req: Request, res: Response) => {
 	res.sendFile(join(__dirname, "dist/client", "index.html"));
 });
 
 const users: User[] = [];
-
-const tasks: Task[] = [
-	{
-		id: 1,
-		name: "create_array",
-		response: "create_array",
-		prev: null,
-	},
-	{
-		id: 2,
-		name: "set_planets_positions",
-		response: "set_planets_positions",
-		prev: 1,
-	},
-	{
-		id: 3,
-		name: "filter_planets",
-		response: "filter_planets",
-		prev: 2,
-	},
-	{
-		id: 4,
-		name: "animation",
-		response: "animation",
-		prev: 3,
-	},
-];
 
 const keys = [
 	"create_array",
@@ -88,8 +61,6 @@ io.on("connection", (socket) => {
 			key: keys.pop() as string,
 		};
 
-		console.log(user, "user");
-
 		users.push(user);
 		socket.emit(`user-${userId}`, getUserKey(userId));
 	});
@@ -117,7 +88,6 @@ io.on("connection", (socket) => {
 		const planetPositionUser = users.find(
 			(user) => user.key === "set_planets_positions",
 		);
-		console.log(planetPositionUser, "planetPositionUser");
 		if (!planetPositionUser) return;
 		io.emit(`user-${planetPositionUser.id}-data`, {
 			key: "set_planets_positions",
@@ -125,26 +95,7 @@ io.on("connection", (socket) => {
 		});
 	});
 
-	// socket.on("get-data", ({ key, id }) => {
-	// 	const prev = tasks.find((task) => task.name === key);
-
-	// 	if (!prev) return;
-
-	// 	const isPrevNumber = typeof prev.prev === "number";
-	// 	const previousKey = isPrevNumber
-	// 		? tasks[(prev.prev as number) - 1].name
-	// 		: null;
-
-	// 	const data = responses.find((response) => response.key === previousKey);
-
-	// 	socket.emit(`user-${id}-data`, {
-	// 		key,
-	// 		info: data ? data.response : null,
-	// 	});
-	// });
-
 	socket.on("set_planets_positions", (data) => {
-		console.log("setPlanetsPositions");
 		responses.push({
 			id: data.id,
 			response: data.response,
@@ -170,15 +121,8 @@ io.on("connection", (socket) => {
 			response: data.response,
 			key: "filter_planets",
 		});
-		console.log("filterPlanets");
 		io.emit("animation", {
 			info: data.response,
-		});
-	});
-
-	socket.on("get-animation", (data) => {
-		socket.emit("animation", {
-			info: responses[2].response,
 		});
 	});
 });
