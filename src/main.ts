@@ -76,3 +76,27 @@ if (button) {
 		});
 	});
 }
+ 
+//----------------------------------------------------- AGREGADO DOS FUNCIONES MAS ---------------------------------------------------
+
+const loader = document.getElementById("loader");
+
+// Mostrar el loader al hacer clic en el botón
+if (button) {
+    button.addEventListener("click", () => {
+        loader.style.display = "block"; // Mostrar el loader
+        const response = createArrays();
+        socket.emit("create_array", {
+            response,
+            id,
+        });
+    });
+}
+
+// Ocultar el loader cuando la animación esté lista
+socket.on("animation", (data) => {
+    const { planetPositions1, planetPositions2 } = data.info as PlanetsPositions;
+    console.log(data);
+    animatePlanets(planetPositions1, planetPositions2);
+    loader.style.display = "none"; // Ocultar el loader
+});
