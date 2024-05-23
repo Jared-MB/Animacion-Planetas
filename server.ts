@@ -48,7 +48,7 @@ io.on("connection", (socket) => {
 		}
 
 		if (keys.length === 0) {
-			socket.emit(`user-${userId}`, {
+			socket.emit("animation", {
 				message: "No more keys available",
 				info: responses[responses.length - 1].response,
 			});
@@ -62,10 +62,21 @@ io.on("connection", (socket) => {
 		};
 
 		users.push(user);
-		socket.emit(`user-${userId}`, getUserKey(userId));
+		io.emit(`user-${userId}`, getUserKey(userId));
+		if (user.key === "filter_planets") {
+			keys.pop();
+			const createArrayUser = users.find((user) => user.key === "create_array");
+			if (!createArrayUser) return;
+			console.log("create_array", createArrayUser.id);
+			io.emit(`user-${createArrayUser.id}-data`, {
+				key: "create_array",
+				info: "",
+			});
+		}
 	});
 
 	socket.on("create_array", (data) => {
+		console.log(data);
 		const hasAlreadyResponse = responses.some(
 			(response) => response.id === data.id,
 		);
@@ -74,7 +85,7 @@ io.on("connection", (socket) => {
 				(user) => user.key === "set_planets_positions",
 			);
 			if (!planetPositionUser) return;
-			socket.emit(`user-${planetPositionUser.id}-data`, {
+			io.emit(`user-${planetPositionUser.id}-data`, {
 				key: "set_planets_positions",
 				info: data,
 			});
